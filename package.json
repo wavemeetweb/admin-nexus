@@ -1,0 +1,12 @@
+{
+  "name": "nexus-admin-sentinel",
+  "version": "1.0.0",
+  "description": "Remote Governance for Zenith Nexus",
+  "main": "admin-server.js",
+  "scripts": {
+    "start": "node admin-server.js"
+  },
+  "dependencies": {
+    "express": "^4.18.2"
+  }
+}
