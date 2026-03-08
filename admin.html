@@ -1,44 +1,18 @@
-<!DOCTYPE html>
-<html>
-<head>
-    <title>Zenith | Central Command</title>
-    <style>
-        body { background: #000; color: #ff3e3e; font-family: monospace; padding: 20px; }
-        .user-card { border: 1px solid #333; padding: 10px; margin: 10px 0; display: flex; justify-content: space-between; }
-        button { background: #ff3e3e; color: white; border: none; padding: 5px 15px; cursor: pointer; }
-        input { background: #111; border: 1px solid #333; color: white; padding: 10px; width: 300px; }
-    </style>
-</head>
-<body>
-    <h1>CENTRAL COMMAND: GLOBAL BAN INTERFACE</h1>
-    <div id="stats">Active Sessions: <span id="count">0</span></div>
-    <hr>
-    <div id="active-users-list">
+// Inside your separate admin.html
+socket.on('admin-global-update', (data) => {
+    if (data.type === 'join') {
+        addUserToAdminList(data.user);
+    } else {
+        removeUserFromAdminList(data.uid);
+    }
+});
+
+function addUserToAdminList(user) {
+    const list = document.getElementById('user-list');
+    list.innerHTML += `
+        <div class="user-card" id="card-${user.uid}">
+            <span>${user.name} | Room: ${user.currentRoom || 'Lobby'}</span>
+            <button onclick="banUser('${user.uid}')">BAN FROM SCHOOL</button>
         </div>
-
-    <script src="/socket.io/socket.io.js"></script>
-    <script>
-        const socket = io();
-        const secret = prompt("Enter Master Admin Secret:");
-
-        socket.on('update-global-list', (users) => {
-            const list = document.getElementById('active-users-list');
-            list.innerHTML = users.map(u => `
-                <div class="user-card">
-                    <div>
-                        <strong>${u.name}</strong> (UID: ${u.uid}) <br>
-                        <small>Class: ${u.currentRoom || 'Lobby'}</small>
-                    </div>
-                    <button onclick="globalBan('${u.uid}')">PERMANENT BAN</button>
-                </div>
-            `).join('');
-        });
-
-        function globalBan(uid) {
-            if(confirm("Are you sure? This user will never be able to log in again.")) {
-                socket.emit('admin-global-ban', { targetUid: uid, adminSecret: secret });
-            }
-        }
-    </script>
-</body>
-</html>
+    `;
+}
